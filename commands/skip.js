@@ -16,7 +16,7 @@ module.exports = new Command({
             if (server_queue.songs.length == 1) {
                 return message.reply("다음 재생할 곡이 없습니다.")
             } else {
-                server_queue.player.stop();
+                server_queue.player.pause();
                 server_queue.songs.shift();
                 video_player(message.guild, server_queue.songs[0], queue);
             }
