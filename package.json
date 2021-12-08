@@ -17,6 +17,7 @@
     "@discordjs/voice": "^0.7.5",
     "@koenie06/discord.js-music": "^1.2.9",
     "discord-api-types": "^0.25.2",
+    "discord-ytdl-core": "^5.0.4",
     "discord.js": "^13.3.1",
     "node-opus": "^0.3.3",
     "nodemon": "^2.0.15",

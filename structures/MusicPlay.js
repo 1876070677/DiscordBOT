@@ -1,6 +1,7 @@
 const DiscordVoice = require('@discordjs/voice');
 const ytdl = require("ytdl-core-discord");
 //const ytdl = require("ytdl-core");
+//const ytdl = require("discord-ytdl-core");
 const fs = require('fs');
 
 const video_player = async (guild, song, queue) => {
@@ -9,6 +10,7 @@ const video_player = async (guild, song, queue) => {
     if (!song) {
         try {
             song_queue.player.stop();
+            song_queue.connection.destroy();
         }catch(error) {
             console.error("error: " + error);
         } finally {
@@ -19,20 +21,24 @@ const video_player = async (guild, song, queue) => {
 
     const stream = await ytdl(song.url, {
         type: 'opus',
+        highWaterMark: 1 << 25,
     });
     const resource = DiscordVoice.createAudioResource(stream, {
         inputType: DiscordVoice.StreamType.Opus,
     });
     song_queue.player.play(resource);
     song_queue.connection.subscribe(song_queue.player);
-    song_queue.player.on(DiscordVoice.AudioPlayerStatus.Idle, () => {
+    song_queue.player
+    .on(DiscordVoice.AudioPlayerStatus.Idle, () => {
+        console.log("next LOG");
         song_queue.songs.shift();
         video_player(guild, song_queue.songs[0], queue);
     })
     .on('error', error => {
+        console.log("ERROR LOG");
         song_queue.text_channel.send('오류 발생으로 다음으로 넘어갑니다.');
-        video_player(guild, song_queue.songs[0], queue);
-    });
+        //video_player(guild, song_queue.songs[0], queue);
+    })
 
 
     /*
@@ -112,6 +118,7 @@ const video_player = async (guild, song, queue) => {
     });
     */
     await song_queue.text_channel.send(`${song.title}이 재생됩니다.`);
+    return;
 }
 
 module.exports = video_player;
