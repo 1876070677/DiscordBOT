@@ -1,4 +1,5 @@
 const Command = require('../structures/commands');
+const { stopAudio } = require('../structures/MusicPlay');
 
 module.exports = new Command({
 	name: "정지",
@@ -12,8 +13,7 @@ module.exports = new Command({
         }
         if(server_queue.player.state.status === 'playing') {
 
-            server_queue.player.stop();
-            server_queue.songs = [];
+            stopAudio(server_queue);
             return message.reply("음악이 정지했습니다.");
         }
 	}

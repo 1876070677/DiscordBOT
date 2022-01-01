@@ -2,7 +2,7 @@ const DiscordVoice = require('@discordjs/voice');
 const Command = require('../structures/commands');
 const ytdl = require("ytdl-core");
 const ytSearch = require('yt-search');
-const video_player = require('../structures/MusicPlay.js');
+const {video_player, stopAudio} = require('../structures/MusicPlay.js');
 // queue(message.guild.id, queue_constructor object { voice channel, texe channel, connection, song[]})
 
 module.exports = new Command({
@@ -49,7 +49,11 @@ module.exports = new Command({
             }
 
             queue.set(message.guild.id, queue_constructor);
-            const player = DiscordVoice.createAudioPlayer();
+            const player = DiscordVoice.createAudioPlayer({
+                behaviors: {
+                    noSubscriber: DiscordVoice.NoSubscriberBehavior.Play
+                }
+            });
             queue_constructor.player = player;
             queue_constructor.songs.push(song);
 
