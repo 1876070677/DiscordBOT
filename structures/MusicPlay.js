@@ -13,20 +13,20 @@ const video_player = async (guild, song, queue) => {
     song_queue.connection.subscribe(song_queue.player);
     song_queue.player.on(DiscordVoice.AudioPlayerStatus.Idle, () => {
         song_queue.songs.shift();
-        if(!song_queue[0]) {
-            stopAudio(song_queue);
+        if(!song_queue.songs[0]) {
+            stopAudio(queue, guild);
         } else {
             video_player(guild, song_queue.songs[0], queue);
         }
     })
     .on('error', error => {
         console.log("ERROR LOG");
-        console.log(error);
+        console.log(error);d
         song_queue.text_channel.send("오류가 발생하였습니다. 다음 행동은...");
         song_queue.songs.shift();
         if(!song_queue[0]) {
             song_queue.text_channel.send("다음 곡이 존재하지 않으므로 종료합니다.");
-            stopAudio(song_queue);
+            stopAudio(queue, guild);
         } else {
             song_queue.text_channel.send("다음 곡이 존재하므로 재생을 이어나갑니다.");
             video_player(guild, song_queue.songs[0], queue);
@@ -74,9 +74,15 @@ const video_player = async (guild, song, queue) => {
     return;
 }
 
-const stopAudio = async (queue) => {
+const stopAudio = async (queue, guild) => {
     console.log("End Playing");
-    if (queue.connection) queue.connection.destroy();
+    const song_queue = queue.get(guild.id);
+    if(song_queue.connection.VoiceConnectionStatus != 'Destroyed') {
+        song_queue.connection.destroy();
+        song_queue.songs = [];
+        queue.delete(guild.id);
+    }
+    //else if (queue.connection) queue.connection.destroy();
 };
 
 module.exports = {

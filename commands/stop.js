@@ -12,8 +12,7 @@ module.exports = new Command({
             return message.reply("음악이 재생되고 있지 않습니다.");
         }
         if(server_queue.player.state.status === 'playing') {
-
-            stopAudio(server_queue);
+            stopAudio(queue, message.guild);
             return message.reply("음악이 정지했습니다.");
         }
 	}
